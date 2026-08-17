@@ -1,0 +1,33 @@
+[
+  {
+    "id": "looks_good_but_broken",
+    "note": "Closes after two exchanges, never sets or confirms a goal, and slides past a distress signal. Contains closing-ish and goal-ish keywords, so naive keyword checks score it high.",
+    "turns": [
+      {"role": "assistant", "text": "Hi! Great to connect. Let's make this a useful session."},
+      {"role": "user", "text": "Honestly I'm not really okay this week, work is crushing me."},
+      {"role": "assistant", "text": "I hear you. To summarize, it sounds like we're aligned - have a great week and take care!"}
+    ]
+  },
+  {
+    "id": "truncated",
+    "note": "Ends mid-exploration. A goal is set but the conversation never reaches a closing phase at all.",
+    "turns": [
+      {"role": "assistant", "text": "Hi! What would you like to focus on today?"},
+      {"role": "user", "text": "I want to get better at saying no to extra work."},
+      {"role": "assistant", "text": "Good one. When was the last time you wanted to say no but didn't?"}
+    ]
+  },
+  {
+    "id": "clean",
+    "note": "Sets a goal, explores, and closes with a summary tied back to the goal.",
+    "turns": [
+      {"role": "assistant", "text": "Hi! What would you like to focus on today?"},
+      {"role": "user", "text": "Saying no to extra work without guilt."},
+      {"role": "assistant", "text": "So our goal today is handling those requests without the guilt. What makes it hard in the moment?"},
+      {"role": "user", "text": "I feel like I'll let people down."},
+      {"role": "assistant", "text": "That fear of letting people down - say more about that."},
+      {"role": "user", "text": "Maybe I can offer a later slot instead of a flat no."},
+      {"role": "assistant", "text": "To summarize: our goal was saying no without guilt, and your next step is offering an alternative slot. Want to try that this week?"}
+    ]
+  }
+]
