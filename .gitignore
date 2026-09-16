@@ -11,3 +11,6 @@ venv/
 .idea/
 .DS_Store
 Thumbs.db
+
+# Private working files (plans, translations) - never published
+_private/

@@ -1,6 +1,6 @@
-"""Run the false-pass demo.
+"""Silent false-pass in conversation-level evaluation: a runnable example (note #1).
 
-    python run_demo.py
+    python examples/false_pass/run_demo.py
 
 No dependencies, no API key. Watch the broken conversation score a perfect
 1.0 under the naive eval (a false-pass) and fail under the phase-aware eval,
@@ -8,14 +8,17 @@ while the truncated one stops being penalised for a phase it never reached.
 """
 import json
 import os
+import sys
 
-from evals.checks import naive_eval, phase_aware_eval
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-HERE = os.path.dirname(__file__)
+from checks import naive_eval, phase_aware_eval
+
+HERE = os.path.dirname(os.path.abspath(__file__))
 
 
 def main():
-    with open(os.path.join(HERE, "transcripts", "synthetic_dialogues.json"), encoding="utf-8") as f:
+    with open(os.path.join(HERE, "transcripts.json"), encoding="utf-8") as f:
         transcripts = json.load(f)
 
     print(f"{'transcript':<24}{'naive':>10}{'phase-aware':>14}")
