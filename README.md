@@ -10,6 +10,11 @@ supposed to catch that reports a number measuring something else. Each note here
 takes one such failure, explains the mechanism, and comes with a small example
 you can run in a few seconds.
 
+The examples are about how the checks themselves are designed: pass/fail
+reporting that doesn't count stages a conversation never reached, guardrail
+behaviour tested off the scripted path, and answer correctness checked against
+what was actually retrieved rather than how confident the answer sounds.
+
 ## Notes
 
 1. **[Your AI pilot passed. That doesn't mean it works.](posts/01-silent-false-pass.md)**
