@@ -65,6 +65,6 @@ python examples/guardrail_branches/run_demo.py
 
 I'm not claiming that safety testing or adversarial testing is new. What I'm pointing at is a specific interaction: structuring a conversation into stages, which is good for control, silently narrows where safety rules are active, and planned-path testing can't see it. The remedy is a floor of rules that are never scoped, plus a test grid that checks each of them in every stage. If you've seen this written up elsewhere, I'd like to read it.
 
-## How the three notes fit
+## How this connects to the other notes
 
-Note #1 is about evaluation that passes conversations which never reached the part being checked. Note #2 is about where specificity should live, if not in an ever-longer list of rules. This note is about the rules that must not be scoped at all. Together they describe one practice: a controllable structure, a floor that holds everywhere, and tests that look where real users go.
+Note #2 argued for scoping rules to stages. This note is the caveat that comes with it: a few rules must be exempt, and you have to test that they are. Note #1 is the reason the problem stays invisible — planned-path test sets are exactly the ones that report everything as fine.
