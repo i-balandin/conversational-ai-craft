@@ -1,0 +1,56 @@
+name: evals
+
+# The point of this workflow is that it needs no API key and no budget. The
+# transcripts are replayed, so what runs on every push is the evaluator, which
+# is the thing these notes make claims about.
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  examples:
+    name: runnable examples
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run every example that needs no model
+        run: |
+          python examples/false_pass/run_demo.py
+          python examples/guardrail_branches/run_demo.py
+          python examples/silent_retrieval/run_demo.py
+          python examples/render_drift/run_demo.py
+
+  promptfoo:
+    name: stage-aware suite (promptfoo)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: evals/promptfoo
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned promptfoo
+        run: npm install --no-audit --no-fund
+      - name: Run the suite
+        run: ./node_modules/.bin/promptfoo eval -c promptfooconfig.yaml -o results.json --no-cache
+        # promptfoo exits non-zero when assertions fail. Three of these are
+        # meant to fail - the suite documents a broken transcript - so the exit
+        # code is not the signal here; the report is.
+        continue-on-error: true
+      - name: Report over applicable results only
+        run: python report.py results.json
+      - name: Keep the run
+        uses: actions/upload-artifact@v4
+        with:
+          name: promptfoo-results
+          path: evals/promptfoo/results.json

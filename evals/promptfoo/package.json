@@ -1,0 +1,12 @@
+{
+  "name": "conversational-ai-craft-evals",
+  "private": true,
+  "description": "Stage-aware conversation evaluation suite (note #1), runnable without an API key.",
+  "scripts": {
+    "eval": "promptfoo eval -c promptfooconfig.yaml -o results.json --no-cache",
+    "report": "python report.py results.json"
+  },
+  "devDependencies": {
+    "promptfoo": "0.119.14"
+  }
+}

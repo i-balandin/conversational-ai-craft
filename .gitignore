@@ -14,3 +14,8 @@ Thumbs.db
 
 # Private working files (plans, translations) - never published
 _private/
+
+# Node / promptfoo
+node_modules/
+package-lock.json
+evals/promptfoo/results.json

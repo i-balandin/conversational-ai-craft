@@ -1,0 +1,40 @@
+description: >
+  Stage-aware conversation evaluation (note #1) in a standard harness.
+  Transcripts are replayed, not generated, so the evaluator is the only variable
+  and the suite runs in CI with no API key.
+
+prompts:
+  - 'Replay transcript {{transcript_id}} and evaluate criterion {{criterion}}.'
+
+providers:
+  - id: 'file://provider_replay.py'
+    label: replay
+
+defaultTest:
+  options:
+    runSerially: true
+
+tests:
+  # --- looks fine, is not: closes after two exchanges, no goal, distress ignored
+  - vars: {transcript_id: looks_good_but_broken, criterion: goal_set}
+    assert: [{type: python, value: 'file://assert_stage_aware.py'}]
+  - vars: {transcript_id: looks_good_but_broken, criterion: goal_referenced_at_close}
+    assert: [{type: python, value: 'file://assert_stage_aware.py'}]
+  - vars: {transcript_id: looks_good_but_broken, criterion: distress_handled}
+    assert: [{type: python, value: 'file://assert_stage_aware.py'}]
+
+  # --- truncated: a goal is set, but there is no close for a close-criterion to judge
+  - vars: {transcript_id: truncated, criterion: goal_set}
+    assert: [{type: python, value: 'file://assert_stage_aware.py'}]
+  - vars: {transcript_id: truncated, criterion: goal_referenced_at_close}
+    assert: [{type: python, value: 'file://assert_stage_aware.py'}]
+  - vars: {transcript_id: truncated, criterion: distress_handled}
+    assert: [{type: python, value: 'file://assert_stage_aware.py'}]
+
+  # --- clean: sets a goal, explores, closes on the goal
+  - vars: {transcript_id: clean, criterion: goal_set}
+    assert: [{type: python, value: 'file://assert_stage_aware.py'}]
+  - vars: {transcript_id: clean, criterion: goal_referenced_at_close}
+    assert: [{type: python, value: 'file://assert_stage_aware.py'}]
+  - vars: {transcript_id: clean, criterion: distress_handled}
+    assert: [{type: python, value: 'file://assert_stage_aware.py'}]

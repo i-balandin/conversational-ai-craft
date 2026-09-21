@@ -57,6 +57,8 @@ The repository has a small modeled example: one assistant built as four stages, 
 
 On the planned path, both configurations handle it. On the other three, the stage-scoped rule misses every time and the floor rule handles every time. A test suite built only on the planned path would call both of them safe. No API key, no dependencies.
 
+**Read that as a diagram, not as a measurement.** The four conversations are ones I wrote, the assistant is a hundred lines of Python, and its rule is active off-stage only when the configuration says `floor`. Nothing here was observed; the demo executes an argument so you can step through it instead of taking my word for the arithmetic. "Three out of four" is a property of the fixture I built, not a leak rate anyone measured. The claim it supports is about what a planned-path test suite *cannot distinguish*, and that claim is structural — which is why a model of it is honest evidence, and why a number from it would not be.
+
 ```
 python examples/guardrail_branches/run_demo.py
 ```
@@ -64,6 +66,10 @@ python examples/guardrail_branches/run_demo.py
 ## What I'm claiming, and what I'm not
 
 I'm not claiming that safety testing or adversarial testing is new. What I'm pointing at is a specific interaction: structuring a conversation into stages, which is good for control, silently narrows where safety rules are active, and planned-path testing can't see it. The remedy is a floor of rules that are never scoped, plus a test grid that checks each of them in every stage. If you've seen this written up elsewhere, I'd like to read it.
+
+**One thing this is adjacent to and is not.** There is a published notion of an instruction hierarchy — training a model to prioritise privileged instructions over lower-priority ones — and a reader could reasonably ask whether the floor is just that. It isn't, and the difference is the useful part. An instruction hierarchy ranks instructions by **message role**: whose text is it, the developer's or an untrusted user's. What I'm describing ranks them by **scope**: in which parts of the conversation does this instruction exist at all. A rule can sit at the top of the hierarchy and still be absent from three stages out of four, because priority and presence are different properties. The two compose; neither substitutes for the other.
+
+**There is a second substrate the same argument applies to: memory.** A prohibition stored in an assistant's memory rather than in its prompt is conditional in a way that is easy to miss: it has to survive an extraction step that summarises conversations into facts and preferences — and negation and scope are precisely what summarisers drop — and then it has to be retrieved by a turn that may not resemble it. "Never raise this topic again" is not a preference with a lower success rate; it is a rule whose single failure is the entire harm. Preferences degrade gracefully. Prohibitions do not. That is a note of its own, but the design rule is the same one as here: a constraint whose violation is unacceptable must not be sited anywhere conditional.
 
 ## How this connects to the other notes
 

@@ -60,7 +60,7 @@ export ANTHROPIC_API_KEY=...
 python experiments/instruction_load/run.py
 ```
 
-I'm not publishing numbers, because I haven't run this at a scale worth reporting. They would depend on the model and on the rules anyway, and the point is that you can find the knee for your own assistant.
+There are no numbers in this note yet: running the experiment at a scale worth reporting is the next increment on it, and publishing a figure before that would be the exact thing note #1 argues against. They would depend on the model and on the rules anyway, and the point is that you can find the knee for your own assistant.
 
 ## What I'm claiming, and what I'm not
 
