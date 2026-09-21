@@ -47,10 +47,16 @@ thing here that needs a model. It hasn't yet been run at a scale worth
 publishing, so the note states the argument and leaves the result slot open
 rather than filling it with numbers that wouldn't carry.
 
+It runs end to end with no key and no network first, so you can see what it does
+before deciding whether to point a real key at it:
+
 ```
-export ANTHROPIC_API_KEY=...
-python experiments/instruction_load/run.py
+CEN_DRY_RUN=1 python experiments/instruction_load/run.py
 ```
+
+Any provider, and Gemini's free tier makes a full run cost nothing. What the
+script sends, where, and why it never touches your key:
+[experiments/instruction_load/README.md](experiments/instruction_load/README.md).
 
 **3. [Your guardrail passed the test. The user didn't follow the test.](posts/03-guardrails-off-the-planned-path.md)**
 

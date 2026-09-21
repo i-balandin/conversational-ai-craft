@@ -12,13 +12,24 @@ Two questions, one run:
 Two arms, five load levels, two models, repeated runs. Nothing about the result
 is assumed: the scoped arm can lose.
 
-    pip install anthropic
-    export ANTHROPIC_API_KEY=...          # set ANTHROPIC_API_KEY=... on Windows
+Any provider works. The claim is about instruction load, not about one vendor,
+so the script takes whichever key you have:
+
+    export ANTHROPIC_API_KEY=...    # pip install anthropic
+    export OPENAI_API_KEY=...       # pip install openai
+    export GEMINI_API_KEY=...       # pip install google-genai
     python experiments/instruction_load/run.py
 
+Gemini has a free tier, which makes a full run of this cost nothing. Use it if
+you would rather not spend money to check someone else's argument.
+
 Environment:
-    CEN_MODELS       comma-separated model ids
-                     (default: claude-haiku-4-5-20251001,claude-sonnet-5)
+    CEN_PROVIDER     anthropic | openai | gemini. Default: whichever key is set.
+    CEN_MODELS       comma-separated model ids. Two is the useful number - a
+                     small model and a large one, since the interesting result
+                     is whether the curve has the same shape on both.
+                     Defaulted only for anthropic; name them for the others,
+                     because model ids move faster than this file does.
     CEN_REPEATS      runs per message per cell (default: 10)
     CEN_TEMPERATURE  sampling temperature (default: 1.0 - run-to-run variation
                      is one of the things being measured, so do not set 0)
@@ -37,8 +48,25 @@ import statistics
 import sys
 from collections import defaultdict
 
+KEY_ENV = {"anthropic": "ANTHROPIC_API_KEY",
+           "openai": "OPENAI_API_KEY",
+           "gemini": "GEMINI_API_KEY"}
+DEFAULT_MODELS = {"anthropic": "claude-haiku-4-5-20251001,claude-sonnet-5"}
+
+
+def detect_provider():
+    named = os.environ.get("CEN_PROVIDER")
+    if named:
+        return named.strip().lower()
+    for provider, env in KEY_ENV.items():
+        if os.environ.get(env):
+            return provider
+    return "anthropic"
+
+
+PROVIDER = detect_provider()
 MODELS = [m.strip() for m in os.environ.get(
-    "CEN_MODELS", "claude-haiku-4-5-20251001,claude-sonnet-5").split(",") if m.strip()]
+    "CEN_MODELS", DEFAULT_MODELS.get(PROVIDER, "")).split(",") if m.strip()]
 REPEATS = int(os.environ.get("CEN_REPEATS", "10"))
 TEMPERATURE = float(os.environ.get("CEN_TEMPERATURE", "1.0"))
 DRY_RUN = os.environ.get("CEN_DRY_RUN") == "1"
@@ -166,15 +194,11 @@ class DryRunClient:
                 "prepare notes first. What do you think? Does that feel possible? ")
 
 
-def make_responder():
-    if DRY_RUN:
-        client = DryRunClient()
-        return lambda model, system, msg, n_active: client.reply(n_active)
-
+def anthropic_responder():
     from anthropic import Anthropic
     client = Anthropic()
 
-    def call(model, system, msg, n_active):
+    def call(model, system, msg, _n_active):
         resp = client.messages.create(
             model=model, max_tokens=300, temperature=TEMPERATURE,
             system=system, messages=[{"role": "user", "content": msg}],
@@ -182,6 +206,57 @@ def make_responder():
         return "".join(b.text for b in resp.content if b.type == "text")
 
     return call
+
+
+def openai_responder():
+    from openai import OpenAI
+    client = OpenAI()
+
+    def call(model, system, msg, _n_active):
+        resp = client.chat.completions.create(
+            model=model, max_tokens=300, temperature=TEMPERATURE,
+            messages=[{"role": "system", "content": system},
+                      {"role": "user", "content": msg}],
+        )
+        return resp.choices[0].message.content or ""
+
+    return call
+
+
+def gemini_responder():
+    from google import genai
+    from google.genai import types
+    client = genai.Client()
+
+    def call(model, system, msg, _n_active):
+        resp = client.models.generate_content(
+            model=model, contents=msg,
+            config=types.GenerateContentConfig(
+                system_instruction=system, temperature=TEMPERATURE,
+                max_output_tokens=300),
+        )
+        return resp.text or ""
+
+    return call
+
+
+# Which of these have been run against a live API, so a reader knows what they
+# are trusting. Anthropic: yes. OpenAI and Gemini: written to the documented
+# shape of each SDK but not yet exercised with a key. If one of them is wrong,
+# it will fail loudly on the first call rather than quietly skew a result - but
+# it is an untested path and saying so is cheaper than pretending otherwise.
+RESPONDERS = {"anthropic": anthropic_responder,
+              "openai": openai_responder,
+              "gemini": gemini_responder}
+
+
+def make_responder():
+    if DRY_RUN:
+        client = DryRunClient()
+        return lambda model, system, msg, n_active: client.reply(n_active)
+    if PROVIDER not in RESPONDERS:
+        sys.exit(f"Unknown CEN_PROVIDER {PROVIDER!r}. One of: {', '.join(RESPONDERS)}")
+    return RESPONDERS[PROVIDER]()
 
 
 # ------------------------------------------------------------------- the run
@@ -297,7 +372,16 @@ def write_chart(summary, here):
 
 
 if __name__ == "__main__":
-    if not DRY_RUN and not os.environ.get("ANTHROPIC_API_KEY"):
-        sys.exit("ANTHROPIC_API_KEY is not set. Set it, or run with CEN_DRY_RUN=1 "
-                 "to exercise the pipeline without a key.")
+    if not DRY_RUN:
+        if PROVIDER not in KEY_ENV:
+            sys.exit(f"Unknown CEN_PROVIDER {PROVIDER!r}. One of: {', '.join(KEY_ENV)}")
+        key_env = KEY_ENV[PROVIDER]
+        if not os.environ.get(key_env):
+            sys.exit(f"{key_env} is not set. Set a key for any of "
+                     f"{', '.join(KEY_ENV.values())}, or run with CEN_DRY_RUN=1 "
+                     f"to exercise the pipeline without one.")
+        if not MODELS:
+            sys.exit(f"Set CEN_MODELS for provider {PROVIDER!r} — two model ids, "
+                     f"comma-separated. Model ids move faster than this file, so "
+                     f"only the anthropic defaults are hardcoded.")
     main()
