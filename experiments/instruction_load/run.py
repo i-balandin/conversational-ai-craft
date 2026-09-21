@@ -33,10 +33,12 @@ Environment:
     CEN_REPEATS      runs per message per cell (default: 10)
     CEN_TEMPERATURE  sampling temperature (default: 1.0 - run-to-run variation
                      is one of the things being measured, so do not set 0)
-    CEN_DELAY        minimum seconds between calls (default 0). A free tier
-                     limits requests per minute; set this to a little over
-                     60/RPM for your tier and the run will not spend its time
-                     backing off.
+    CEN_DELAY        minimum seconds between calls (default 0). Useful only
+                     against a per-MINUTE limit. Check which kind your tier
+                     has first: a per-day cap is the common one on free tiers,
+                     and pacing does nothing about it except make the run
+                     longer. Ask for the per-model figure this script prints
+                     at startup and compare it with your daily cap.
     CEN_DRY_RUN      1 to exercise the whole pipeline with a canned responder,
                      no API key and no cost. Use it to check the plumbing.
 
@@ -223,13 +225,35 @@ def paced(call, min_interval):
     return wrapped
 
 
-def with_retry(call, attempts=6, base=4.0):
-    """Retry on anything the provider raises, with exponential backoff.
+# A provider can refuse for two reasons that look almost identical and need
+# opposite responses. Discriminate on the quota's identity, never on the words
+# "quota exceeded", which appear in both.
+HOPELESS = re.compile(r"RequestsPerDay|PerDayPerProject|per\s*day|"
+                      r"insufficient_quota|billing", re.IGNORECASE)
+STATED_DELAY = re.compile(r"retry in ([0-9]+(?:\.[0-9]+)?)s|"
+                          r"retryDelay['\"]?\s*:\s*['\"]?([0-9]+)s", re.IGNORECASE)
 
-    A free tier will rate-limit a run this size, and a run that dies at call
-    400 of 500 wastes the whole thing. Nothing here inspects the exception
-    type: providers spell rate limits differently and a wrong guess about the
-    spelling is worse than a retry that was not needed.
+
+def stated_delay(text):
+    """The wait the provider itself asked for, if it named one."""
+    m = STATED_DELAY.search(text)
+    if not m:
+        return None
+    return float(next(g for g in m.groups() if g))
+
+
+def with_retry(call, attempts=6, base=4.0):
+    """Retry a transient limit; stop immediately on one that will not clear.
+
+    A per-minute limit clears while you wait, and a run that dies at call 400
+    of 600 wastes the whole thing - so backoff is worth having. A per-DAY quota
+    does not clear, and retrying into it burns the remainder of the quota to
+    learn nothing. Those need opposite responses.
+
+    It still does not try to classify by exception type - providers spell rate
+    limits differently and guessing the spelling is fragile. It looks for the
+    one distinction that changes what you should do, in the provider's own
+    message, and when in doubt it retries.
     """
     def wrapped(*args, **kwargs):
         import time
@@ -237,11 +261,22 @@ def with_retry(call, attempts=6, base=4.0):
             try:
                 return call(*args, **kwargs)
             except Exception as exc:  # noqa: BLE001 - see docstring
+                text = str(exc)
+                if HOPELESS.search(text):
+                    raise SystemExit(
+                        "\nStopped: the provider names a per-day or billing quota, "
+                        "which will not clear by waiting.\n\n" + text[:700] +
+                        "\n\nRetrying would spend the rest of it for nothing. Run the "
+                        "remaining models tomorrow, or on a model whose daily quota is "
+                        "untouched - the buckets are per model.") from exc
                 if attempt == attempts - 1:
                     raise
-                wait = base * (2 ** attempt)
+                # Prefer the wait the provider asked for over our own guess.
+                asked = stated_delay(text)
+                wait = (asked + 1.0) if asked else base * (2 ** attempt)
+                source = "provider asked" if asked else "backoff"
                 print(f"    retry {attempt + 1}/{attempts - 1} in {wait:.0f}s "
-                      f"({type(exc).__name__})", flush=True)
+                      f"({source}, {type(exc).__name__})", flush=True)
                 time.sleep(wait)
     return wrapped
 
@@ -327,6 +362,14 @@ def instability(flags):
 
 
 def main():
+    per_model = len(LOAD_LEVELS) * len(USER_MESSAGES) * 2 * REPEATS
+    print(f"{per_model} calls per model, {per_model * len(MODELS)} in total "
+          f"({len(MODELS)} models x 2 arms x {len(LOAD_LEVELS)} levels x "
+          f"{len(USER_MESSAGES)} messages x {REPEATS} repeats).")
+    print("Free tiers are usually capped per DAY per model - check yours against "
+          "the per-model figure, not the total, and remember a pilot run spends "
+          "from the same bucket.\n", flush=True)
+
     respond = make_responder()
     rows = []
 
