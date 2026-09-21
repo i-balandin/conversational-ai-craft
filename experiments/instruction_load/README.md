@@ -64,7 +64,8 @@ curve is a fact about that model.
 ## And if you would rather not run anything
 
 The argument in the note is stated in full without it, and the note says plainly
-that it has no numbers yet. Nothing here depends on you spending money to check
-someone else's reasoning. The reason to run it is that the number that matters
-for your product is the one from your model and your rules — mine would only
-tell you that the effect exists somewhere else.
+what my own run did and did not establish: a null, from criteria too easy to
+fail. Nothing here depends on you spending money to check someone else's
+reasoning. The reason to run it is that the number that matters for your product
+is the one from your model and your rules — mine does not carry over, and on
+that run it did not exist.
