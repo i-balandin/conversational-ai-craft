@@ -225,18 +225,19 @@ def paced(call, min_interval):
     return wrapped
 
 
-# There is no reliable way to read a provider's refusal prose and know whether
-# waiting will help. I tried three times and was wrong three times:
-#   - "quota exceeded for metric" appears in both the per-minute and per-day
-#     refusal, so matching it marks every transient limit as fatal;
-#   - so does "check your plan and billing details";
-#   - and the per-day refusal states a short "retry in Ns" delay of its own,
-#     so a stated delay does not mean the wait will help either.
-# So this decides by BEHAVIOUR instead of by text: honour the wait the provider
-# asked for, retry, and conclude a limit is hopeless only when waiting has
-# demonstrably failed to clear it. The asymmetry justifies the default - a few
-# wasted calls against a per-day cap costs little, while treating a per-minute
-# cap as fatal throws away the whole run, which is what happened twice.
+# No classification of the refusal text. Three attempts at one all failed, and
+# the reason is worth the comment: on this tier every refusal I ever saw was a
+# per-DAY cap, and I was writing rules to separate per-day from per-minute -
+# a distinction the evidence never contained. "Limit: 20" alongside "retry in
+# 28s" reads like a per-minute quota only if you already expect one; the unit
+# lives in the quotaId, which my own truncated logging had cut off.
+#
+# So this decides by BEHAVIOUR: honour the wait the provider asked for, retry,
+# and conclude a limit is hopeless only when waiting has demonstrably failed to
+# clear it. The asymmetry makes that the right default - retrying a few times
+# against a per-day cap wastes a handful of calls, while treating a transient
+# limit as fatal throws away the whole run, which is what happened twice.
+# See refusals/ for the four messages and what each rule got wrong.
 STATED_DELAY = re.compile(r"retry in ([0-9]+(?:\.[0-9]+)?)s|"
                           r"retryDelay['\"]?\s*:\s*['\"]?([0-9]+)s", re.IGNORECASE)
 MAX_WAIT = 90.0
@@ -398,9 +399,12 @@ def main():
     writer.writeheader()
 
     try:
+        # Level outer, arm inner, so every completed level carries BOTH arms.
+        # A quota can end the run at any point, and a partial result that has
+        # flat without scoped answers nothing - the comparison is the finding.
         for model in MODELS:
-            for arm in ("flat", "scoped"):
-                for n_extra in LOAD_LEVELS:
+            for n_extra in LOAD_LEVELS:
+                for arm in ("flat", "scoped"):
                     cell = []
                     for msg_idx, msg in enumerate(USER_MESSAGES):
                         rules = active_extras(n_extra, arm, msg_idx)

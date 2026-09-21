@@ -1,41 +1,54 @@
-# Two refusals, kept verbatim
+# Four refusals, kept verbatim
 
-The provider's own words, saved from real runs. They are here because the retry
-logic in `../run.py` has to tell "wait and it will clear" from "wait and it
-won't", and I got that wrong three times in a row by reasoning about the text
-instead of reading it.
+Real refusals from real runs, saved because the retry logic in `../run.py` has
+to decide whether waiting will help — and because getting that wrong five times
+turned out to be a better story than getting it right.
 
-- `per_minute.txt` — a per-minute cap. It clears; wait and continue.
-- `per_day.txt` — a per-day cap. It does not clear.
-- `per_minute_multi.txt` — a third refusal, saved truncated, which is its own
-  lesson: the error printer cut the message to 700 characters before logging
-  it, and the cut removed exactly the part needed to diagnose what happened.
+| file | model | limit | quota id survived? |
+|---|---|---|---|
+| `day-500-untruncated.txt` | a flash-lite | 500 | yes — `…RequestsPerDayPerProjectPerModel…` |
+| `day-20-untruncated.txt` | a newer flash | 20 | yes — same, per **day** |
+| `day-20-truncated.txt` | a newer flash | 20 | no |
+| `day-20-truncated-2.txt` | a newer flash | 20 | no |
 
-## Every text rule I tried, and how each one failed
+## The mistake worth reading
 
-**Match "quota exceeded for metric".** Appears in both. Marks every transient
-limit as fatal.
+Every one of these is a **per-day** cap. I never once observed a per-minute
+refusal on this tier.
 
-**Match "billing".** Every refusal contains "check your plan and billing
-details". Same failure, and this one survived a unit test because I tested
-against an abbreviated copy of `per_minute.txt` from which I had, by chance,
-removed the word. A fixture that agrees with you is worse than no fixture.
+But I spent five runs writing rules to tell per-minute from per-day, because I
+assumed a refusal that says *"Please retry in 28 seconds"* and names a limit of
+20 must be twenty per minute. It wasn't. It was twenty per day, and the "retry
+in 28s" was there anyway.
 
-**Match the quota's identity (`RequestsPerDay`).** The most defensible of the
-three, and it still aborted a run I could not afterwards diagnose, because the
-message had been truncated before it reached the log. Whether it matched on a
-per-day violation returned *alongside* the binding per-minute one, I cannot
-say — and not being able to say is the point.
+So I was not failing to draw a subtle distinction. **I was drawing a
+distinction the evidence never contained**, and each failed rule made me more
+confident the distinction was real and merely hard to detect.
 
-## What the code does instead
+Three things kept that alive, and all three are mine:
 
-It decides by behaviour: honour the delay the provider asked for, retry, and
-conclude a limit is hopeless only when waiting has demonstrably failed to clear
-it. No classification of prose at all.
+**I truncated the evidence.** The error printer cut the message to 700
+characters before logging it, and the `quotaId` — the only field that decides
+the question — sat past the cut. Two of the four files above still show the
+damage.
 
-The asymmetry is what justifies the default. Retrying a few times against a
-per-day cap wastes a handful of calls. Treating a per-minute cap as fatal
-throws away an hour-long run, which is what actually happened, twice.
+**I tested against the truncation.** The second rule matched `billing`, which
+appears in every refusal. The unit test passed because the fixture I tested
+against was an abbreviated copy with that word trimmed out of it.
 
-And the message is now printed in full when it finally gives up, because the
-one time I truncated it to keep the output tidy, I destroyed the evidence.
+**I read a plausible number as the unit I expected.** "Limit: 20" with a
+28-second retry delay reads like a per-minute quota if you already think in
+per-minute quotas. The unit was never stated in the part of the message I let
+myself see.
+
+## What the code does now
+
+No classification of the refusal text at all. It honours the delay the provider
+asks for, retries, and concludes a limit is hopeless only when waiting has
+demonstrably failed to clear it — then prints the message **in full**, which is
+how the actual quota id finally became visible and the whole thing resolved in
+one reading.
+
+The asymmetry is what makes that default safe: retrying a few times against a
+per-day cap wastes a handful of calls, while treating a transient limit as
+fatal throws away an hour-long run. The right default is the cheap mistake.
