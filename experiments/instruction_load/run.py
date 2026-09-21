@@ -194,6 +194,29 @@ class DryRunClient:
                 "prepare notes first. What do you think? Does that feel possible? ")
 
 
+def with_retry(call, attempts=6, base=4.0):
+    """Retry on anything the provider raises, with exponential backoff.
+
+    A free tier will rate-limit a run this size, and a run that dies at call
+    400 of 500 wastes the whole thing. Nothing here inspects the exception
+    type: providers spell rate limits differently and a wrong guess about the
+    spelling is worse than a retry that was not needed.
+    """
+    def wrapped(*args, **kwargs):
+        import time
+        for attempt in range(attempts):
+            try:
+                return call(*args, **kwargs)
+            except Exception as exc:  # noqa: BLE001 - see docstring
+                if attempt == attempts - 1:
+                    raise
+                wait = base * (2 ** attempt)
+                print(f"    retry {attempt + 1}/{attempts - 1} in {wait:.0f}s "
+                      f"({type(exc).__name__})", flush=True)
+                time.sleep(wait)
+    return wrapped
+
+
 def anthropic_responder():
     from anthropic import Anthropic
     client = Anthropic()
@@ -256,7 +279,7 @@ def make_responder():
         return lambda model, system, msg, n_active: client.reply(n_active)
     if PROVIDER not in RESPONDERS:
         sys.exit(f"Unknown CEN_PROVIDER {PROVIDER!r}. One of: {', '.join(RESPONDERS)}")
-    return RESPONDERS[PROVIDER]()
+    return with_retry(RESPONDERS[PROVIDER]())
 
 
 # ------------------------------------------------------------------- the run

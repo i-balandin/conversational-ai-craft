@@ -6,7 +6,7 @@
 
 Specific and controllable pull against each other. Every nuance added makes behaviour harder to predict, and every generic safeguard makes the assistant less fitted. This framework is a set of practices for getting both. It comes from building and evaluating client-specific assistants, and it is written to transfer to other products, teams and use cases.
 
-**If you read one item, read #6.** It is the one that has cost teams the most time in my experience and the one that is easiest to check tomorrow.
+**If you read one item, read item 6 below** — the prompt that actually ran. It is the one that has cost teams the most time in my experience and the one that is easiest to check tomorrow. (Item numbers here are the framework's; the notes have their own numbering, and the two do not line up.)
 
 ---
 

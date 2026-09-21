@@ -188,15 +188,18 @@ rows that say "not done" are the ones that make the rest credible.
 
 ## What the examples are and aren't
 
-Two different kinds of thing live in `examples/`, and the difference matters.
+Three different kinds of thing live in `examples/`, and the difference matters.
 
 **Proofs of design.** `guardrail_branches`, `silent_retrieval`, `render_drift`,
-`judge_contamination` and `memory_prohibition` are deterministic models. The assistant is a hundred lines of
-Python that does exactly what its configuration says, the conversations are ones
-I wrote, and running them produces the same output every time. They demonstrate
-a test design and execute an argument you can step through. They are not
-measurements, and where one of them prints something like "three out of four",
-that is a property of a fixture I built — not a rate anyone observed.
+`judge_contamination` and `memory_prohibition` are deterministic models. Each is
+a hundred-odd lines of Python doing exactly what its note describes — an
+assistant that follows only the rules active in its stage, a renderer that
+discards a value with nowhere to go, a summariser that keeps a topic and drops
+the negation — run against conversations I wrote. They produce the same output
+every time. They demonstrate a test design and execute an argument you can step
+through. They are not measurements, and where one prints something like "three
+out of four" or "one in four", that is a property of a fixture I built, not a
+rate anyone observed.
 
 **A tool, arguing nothing.** `style_markers` is a measuring stick, not a
 demonstration: give it two transcripts and it prints the surface markers for
