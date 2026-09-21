@@ -225,13 +225,21 @@ def paced(call, min_interval):
     return wrapped
 
 
-# A provider can refuse for two reasons that look almost identical and need
-# opposite responses. Discriminate on the quota's identity, never on the words
-# "quota exceeded", which appear in both.
-HOPELESS = re.compile(r"RequestsPerDay|PerDayPerProject|per\s*day|"
-                      r"insufficient_quota|billing", re.IGNORECASE)
+# There is no reliable way to read a provider's refusal prose and know whether
+# waiting will help. I tried three times and was wrong three times:
+#   - "quota exceeded for metric" appears in both the per-minute and per-day
+#     refusal, so matching it marks every transient limit as fatal;
+#   - so does "check your plan and billing details";
+#   - and the per-day refusal states a short "retry in Ns" delay of its own,
+#     so a stated delay does not mean the wait will help either.
+# So this decides by BEHAVIOUR instead of by text: honour the wait the provider
+# asked for, retry, and conclude a limit is hopeless only when waiting has
+# demonstrably failed to clear it. The asymmetry justifies the default - a few
+# wasted calls against a per-day cap costs little, while treating a per-minute
+# cap as fatal throws away the whole run, which is what happened twice.
 STATED_DELAY = re.compile(r"retry in ([0-9]+(?:\.[0-9]+)?)s|"
                           r"retryDelay['\"]?\s*:\s*['\"]?([0-9]+)s", re.IGNORECASE)
+MAX_WAIT = 90.0
 
 
 def stated_delay(text):
@@ -262,18 +270,21 @@ def with_retry(call, attempts=6, base=4.0):
                 return call(*args, **kwargs)
             except Exception as exc:  # noqa: BLE001 - see docstring
                 text = str(exc)
-                if HOPELESS.search(text):
-                    raise SystemExit(
-                        "\nStopped: the provider names a per-day or billing quota, "
-                        "which will not clear by waiting.\n\n" + text[:700] +
-                        "\n\nRetrying would spend the rest of it for nothing. Run the "
-                        "remaining models tomorrow, or on a model whose daily quota is "
-                        "untouched - the buckets are per model.") from exc
                 if attempt == attempts - 1:
-                    raise
+                    # Waiting has now demonstrably failed to clear it. The
+                    # message is printed in full: truncating it once destroyed
+                    # the evidence needed to work out what had happened.
+                    raise SystemExit(
+                        f"\nStopped after {attempts} attempts and "
+                        f"{int(sum(min(MAX_WAIT, base * 2 ** a) for a in range(attempts - 1)))}s "
+                        f"of waiting. The limit did not clear, so it is not a "
+                        f"per-minute one.\n\nProvider's message, in full:\n\n{text}\n\n"
+                        f"If this is a daily cap, the buckets are per model - run the "
+                        f"remaining models tomorrow, or name a model whose daily quota "
+                        f"is untouched.") from exc
                 # Prefer the wait the provider asked for over our own guess.
                 asked = stated_delay(text)
-                wait = (asked + 1.0) if asked else base * (2 ** attempt)
+                wait = min(MAX_WAIT, (asked + 1.0) if asked else base * (2 ** attempt))
                 source = "provider asked" if asked else "backoff"
                 print(f"    retry {attempt + 1}/{attempts - 1} in {wait:.0f}s "
                       f"({source}, {type(exc).__name__})", flush=True)
@@ -372,31 +383,55 @@ def main():
 
     respond = make_responder()
     rows = []
-
-    for model in MODELS:
-        for arm in ("flat", "scoped"):
-            for n_extra in LOAD_LEVELS:
-                for msg_idx, msg in enumerate(USER_MESSAGES):
-                    rules = active_extras(n_extra, arm, msg_idx)
-                    system = build_system_prompt(rules)
-                    for rep in range(REPEATS):
-                        reply = respond(model, system, msg, len(rules) + len(CORE_RULES))
-                        checks = check_core(reply)
-                        rows.append({
-                            "model": model, "arm": arm, "temperature": TEMPERATURE,
-                            "declared_extras": n_extra, "active_extras": len(rules),
-                            "message": msg_idx, "repeat": rep,
-                            **checks, "all_core": all(checks.values()),
-                            "words": len(reply.split()),
-                        })
-                print(f"{model:<28} {arm:<7} declared={n_extra:>2} done", flush=True)
-
     here = os.path.dirname(os.path.abspath(__file__))
     out = os.path.join(here, "results.csv")
-    with open(out, "w", newline="", encoding="utf-8") as f:
-        w = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
-        w.writeheader()
-        w.writerows(rows)
+    stopped_early = None
+
+    # Written as each cell finishes, not at the end. A run this long will
+    # sometimes be refused halfway, and discarding the cells that did complete
+    # turns a partial result into no result.
+    fields = ["model", "arm", "temperature", "declared_extras", "active_extras",
+              "message", "repeat", "one_question", "no_advice", "short",
+              "all_core", "words"]
+    handle = open(out, "w", newline="", encoding="utf-8")
+    writer = csv.DictWriter(handle, fieldnames=fields)
+    writer.writeheader()
+
+    try:
+        for model in MODELS:
+            for arm in ("flat", "scoped"):
+                for n_extra in LOAD_LEVELS:
+                    cell = []
+                    for msg_idx, msg in enumerate(USER_MESSAGES):
+                        rules = active_extras(n_extra, arm, msg_idx)
+                        system = build_system_prompt(rules)
+                        for rep in range(REPEATS):
+                            reply = respond(model, system, msg,
+                                            len(rules) + len(CORE_RULES))
+                            checks = check_core(reply)
+                            cell.append({
+                                "model": model, "arm": arm, "temperature": TEMPERATURE,
+                                "declared_extras": n_extra, "active_extras": len(rules),
+                                "message": msg_idx, "repeat": rep,
+                                **checks, "all_core": all(checks.values()),
+                                "words": len(reply.split()),
+                            })
+                    writer.writerows(cell)
+                    handle.flush()
+                    rows.extend(cell)
+                    print(f"{model:<28} {arm:<7} declared={n_extra:>2} done "
+                          f"({len(rows)} calls recorded)", flush=True)
+    except (SystemExit, KeyboardInterrupt, Exception) as exc:  # noqa: BLE001
+        stopped_early = exc
+    finally:
+        handle.close()
+
+    if not rows:
+        raise SystemExit(f"\nNo calls completed.\n{stopped_early}")
+    if stopped_early is not None:
+        print(f"\n!! STOPPED EARLY after {len(rows)} calls. What follows is a "
+              f"PARTIAL result and must be labelled as one.\n{stopped_early}\n",
+              flush=True)
 
     summary = summarise(rows)
     print_summary(summary)
