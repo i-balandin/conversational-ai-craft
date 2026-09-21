@@ -20,6 +20,4 @@ node_modules/
 package-lock.json
 evals/promptfoo/results.json
 
-# Experiment output - committed only after a real run
-experiments/instruction_load/results.csv
-experiments/instruction_load/adherence.png
+# Experiment output is committed now that a real run has produced it.

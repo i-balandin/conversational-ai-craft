@@ -60,11 +60,33 @@ export ANTHROPIC_API_KEY=...
 python experiments/instruction_load/run.py
 ```
 
-There are no numbers in this note yet: running the experiment at a scale worth reporting is the next increment on it, and publishing a figure before that would be the exact thing note #1 argues against. They would depend on the model and on the rules anyway, and the point is that you can find the knee for your own assistant.
+## What happened when I ran it
+
+180 calls, one model, load levels of 0, 5, 10, 20 and 40 extra rules, both arms, four repeats per message. `results.csv` and the chart are committed next to the script.
+
+**The experiment did not detect the effect.** Core-rule adherence was 1.00 at every load level in both arms, except one cell at 0.95. One call in 180 broke a core rule — and it broke it in the *scoped* arm at five extra rules, which is not even the direction the argument predicts. Run-to-run disagreement was zero almost everywhere.
+
+The reason is visible in the same data. The longest reply in the whole run was 52 words against an 80-word limit, and the one-question rule held in 180 of 180. **Two of my three criteria were never in any danger of failing**, so they could not register degradation if it were there. That is the vacuous pass from note #1, arriving in my own experiment: I built a measure that could not fail and then read its passing as information.
+
+So what this run establishes is about the instrument, not the claim. The criteria are too easy for this model, and the scoped-versus-flat comparison had nothing to discriminate — you cannot show that scoping helps when the flat arm never hurts.
+
+**What I'm not going to do is tighten the criteria until the effect appears.** The run is published as it came out. Rewriting the measure after seeing the result, and reporting only the version that worked, is the specific move that makes a number worthless.
+
+What would actually test it, stated before running anything else:
+
+- **Criteria that can fail.** The published benchmarks find the effect using much harder compositional constraints — satisfying many interacting requirements at once — not three loose stylistic rules. Any rerun needs a constraint set where the model demonstrably struggles at load zero.
+- **Multi-turn.** The documented degradation is worse as constraints accumulate *over a conversation*. My test was a single turn, which removes the part of the effect that is best established.
+- **More than one model and more than 180 calls.** A free tier's daily cap ended the last cell of this run, which is also why it is 9 of 10 cells rather than 10.
+
+Honest limits, all of them: one model, one provider, single-turn, 180 calls, four repeats per cell, criteria that saturated, and a run that stopped one cell short.
 
 ## What I'm claiming, and what I'm not
 
-I'm not claiming that too many instructions degrade performance. Others have measured that carefully. What I'm proposing is a design conclusion from it, based on building client-specific assistants: specificity should be encoded in structure, with a separate shared floor, rather than accumulated as rules. That conclusion should be tested, and the experiment above is how. If you've seen this argued elsewhere, I'd like to read it.
+I'm not claiming that too many instructions degrade performance. Others have measured that carefully. What I'm proposing is a design conclusion from it, based on building client-specific assistants: specificity should be encoded in structure, with a separate shared floor, rather than accumulated as rules.
+
+And that conclusion is still untested. My own experiment returned a null, for a reason that was my fault rather than the argument's, so as of this note the prescription rests on the published benchmarks plus my experience of maintaining these systems — which is weaker support than I would like and weaker than the note originally implied. The design moves above are worth trying on that basis; they are not worth believing on it.
+
+If you've seen this argued elsewhere, or tested properly, I'd like to read it.
 
 ## Next
 

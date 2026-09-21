@@ -43,9 +43,11 @@ about the design conclusion — put the specificity in the structure of the
 conversation, and keep a small floor of always-on rules separate from it.
 
 The claim comes with an experiment that tests it on your own assistant — the one
-thing here that needs a model. It hasn't yet been run at a scale worth
-publishing, so the note states the argument and leaves the result slot open
-rather than filling it with numbers that wouldn't carry.
+thing here that needs a model. I ran it, and it found nothing: adherence held at
+every load level, because two of my three criteria turned out to be incapable of
+failing. The note reports that null and why it is my fault rather than the
+argument's, which leaves the prescription resting on published benchmarks and
+experience rather than on evidence of my own.
 
 It runs end to end with no key and no network first, so you can see what it does
 before deciding whether to point a real key at it:
