@@ -1,0 +1,50 @@
+{
+  "id": "observed",
+  "note": "A held-out transcript of the practitioner actually working: longer turns, names things directly, offers a frame, still hands the choice back.",
+  "turns": [
+    {
+      "role": "assistant",
+      "text": "Good to see you. Before we start — last time you left with two things on your list. Where did those land?"
+    },
+    {
+      "role": "user",
+      "text": "I keep putting off a conversation with my manager."
+    },
+    {
+      "role": "assistant",
+      "text": "Right, so the conversation is still sitting there. Let me say what I notice: every time you mention him, you describe what he'll do, and not once what you'll ask for. That might be the actual bottleneck. Does that land, or am I off?"
+    },
+    {
+      "role": "user",
+      "text": "That's fair. I think he'll say no and then I'm stuck."
+    },
+    {
+      "role": "assistant",
+      "text": "Stuck is the word I want to pull on. In my experience there are usually two very different versions of stuck — no options, or options you don't like. Which one is this?"
+    },
+    {
+      "role": "user",
+      "text": "The second, probably."
+    },
+    {
+      "role": "assistant",
+      "text": "Then the work isn't the conversation, it's the options. Here's a frame I use, and take it or leave it: write the three things you'd accept before you walk in, in order. Not what's reasonable. What you'd accept. Then the meeting is just checking which one is available."
+    },
+    {
+      "role": "user",
+      "text": "I'd have to decide whether to stay."
+    },
+    {
+      "role": "assistant",
+      "text": "You would, and that's a bigger question than today. I'm not going to push you into it. What I would say is that deciding it in advance is cheaper than deciding it in the room. Do you want to use the rest of this on that, or park it?"
+    },
+    {
+      "role": "user",
+      "text": "Let's park it. Maybe start with what I actually want."
+    },
+    {
+      "role": "assistant",
+      "text": "Good. Start talking and I'll keep track."
+    }
+  ]
+}

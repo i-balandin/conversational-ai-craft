@@ -102,6 +102,34 @@ a diagnostic rather than a fix.
 python examples/judge_contamination/run_demo.py
 ```
 
+**6. [A preference can live in memory. A prohibition can't.](posts/06-a-prohibition-cannot-live-in-memory.md)**
+
+Memory stores facts and preferences, and a boundary — "don't bring that up
+again" — looks like the same kind of thing. It isn't. The extraction step is a
+summariser, so it keeps the topic and drops the "don't", turning a rule into a
+subject marked as significant. And retrieval fires on resemblance, so it catches
+the turn that names the topic outright and misses the oblique approaches the
+rule exists for. A preference that doesn't surface costs a little; a prohibition
+that doesn't surface *is* the harm.
+
+```
+python examples/memory_prohibition/run_demo.py
+```
+
+**7. [The spec and the sign-off come from the same person.](posts/07-the-spec-and-the-signoff-come-from-the-same-person.md)**
+
+When the assistant is built around one practitioner's method, the specification
+comes from them and so does acceptance. Often their account is accurate — but
+you can't tell from the description which case you're in, and if the spec
+encoded the practice they intend rather than the one they run, sign-off compares
+it against the same internal model and approves it. One held-out artefact of the
+real practice breaks that circuit, and costs nothing when the account was right
+all along.
+
+```
+python examples/style_markers/run_demo.py
+```
+
 ## The same argument in a real harness
 
 An argument that only holds inside my own evaluator isn't worth much. So note
@@ -162,13 +190,18 @@ rows that say "not done" are the ones that make the rest credible.
 
 Two different kinds of thing live in `examples/`, and the difference matters.
 
-**Proofs of design.** `guardrail_branches`, `silent_retrieval`, `render_drift`
-and `judge_contamination` are deterministic models. The assistant is a hundred lines of
+**Proofs of design.** `guardrail_branches`, `silent_retrieval`, `render_drift`,
+`judge_contamination` and `memory_prohibition` are deterministic models. The assistant is a hundred lines of
 Python that does exactly what its configuration says, the conversations are ones
 I wrote, and running them produces the same output every time. They demonstrate
 a test design and execute an argument you can step through. They are not
 measurements, and where one of them prints something like "three out of four",
 that is a property of a fixture I built — not a rate anyone observed.
+
+**A tool, arguing nothing.** `style_markers` is a measuring stick, not a
+demonstration: give it two transcripts and it prints the surface markers for
+each and the gap. Note #7 says why shipping a demonstration there would have
+proved only my own construction.
 
 **Proofs of effect.** `false_pass` and the promptfoo suite score transcripts
 with two different evaluators and let you watch the same conversation flip from

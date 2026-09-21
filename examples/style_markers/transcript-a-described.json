@@ -1,0 +1,50 @@
+{
+  "id": "described",
+  "note": "Built from how the practitioner described their method: short, purely non-directive, one question per turn.",
+  "turns": [
+    {
+      "role": "assistant",
+      "text": "What would you like to focus on today?"
+    },
+    {
+      "role": "user",
+      "text": "I keep putting off a conversation with my manager."
+    },
+    {
+      "role": "assistant",
+      "text": "What makes that conversation feel worth putting off?"
+    },
+    {
+      "role": "user",
+      "text": "I think he'll say no and then I'm stuck."
+    },
+    {
+      "role": "assistant",
+      "text": "And if he did say no, what would be different for you?"
+    },
+    {
+      "role": "user",
+      "text": "I'd have to decide whether to stay."
+    },
+    {
+      "role": "assistant",
+      "text": "What would help you feel ready to decide?"
+    },
+    {
+      "role": "user",
+      "text": "Honestly I don't know where to start."
+    },
+    {
+      "role": "assistant",
+      "text": "Where would you like to start?"
+    },
+    {
+      "role": "user",
+      "text": "Maybe with what I actually want."
+    },
+    {
+      "role": "assistant",
+      "text": "What do you actually want?"
+    }
+  ]
+}
