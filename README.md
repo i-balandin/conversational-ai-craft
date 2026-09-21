@@ -120,6 +120,23 @@ for it currently is, stated plainly and at a named rung.
 Working name, Controlled Specificity. It's a framework from practice on its way
 to a tested method, not a finished standard.
 
+## Two practice pages
+
+Neither of these makes a claim to be new. They are the working artefacts the
+notes came out of, and they are here because the shape of them transfers even
+where the content doesn't.
+
+**[A house standard for prompts](prompt-house-standard.md)** — the list I check
+a prompt against before calling it done, assembled from two unrelated products,
+with the case that put each line there. The rules are mostly unremarkable; what
+is worth copying is a short list, kept per team, where every line carries its
+case.
+
+**[Making prompt work auditable](making-prompt-work-auditable.md)** — prompt
+work disappears when it succeeds, which leaves you making the one claim that
+can't be checked. One table, four rules about how it's filled in, and why the
+rows that say "not done" are the ones that make the rest credible.
+
 ## What the examples are and aren't
 
 Two different kinds of thing live in `examples/`, and the difference matters.
