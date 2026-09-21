@@ -135,6 +135,20 @@ all along.
 python examples/style_markers/run_demo.py
 ```
 
+**8. [The instrument decides what you can claim.](posts/08-the-instrument-decides-what-you-can-claim.md)**
+
+Someone hands you a quality framework and asks you to show the assistant
+conforms to it. An eval criterion is a judgement about a transcript, and most
+such frameworks mix things a conversation shows with things only a process
+shows — so sorting the list by observability before translating it usually
+reveals the eval set substantiates considerably less than the tally suggests. Worse is the criterion
+written anyway for an unobservable principle: it counts as coverage and proves
+nothing. Plus what replaces predictability once the assistant is generative.
+
+```
+python examples/conformance_claim/run_demo.py
+```
+
 ## The same argument in a real harness
 
 An argument that only holds inside my own evaluator isn't worth much. So note
@@ -196,7 +210,8 @@ rows that say "not done" are the ones that make the rest credible.
 Three different kinds of thing live in `examples/`, and the difference matters.
 
 **Proofs of design.** `guardrail_branches`, `silent_retrieval`, `render_drift`,
-`judge_contamination` and `memory_prohibition` are deterministic models. Each is
+`judge_contamination`, `memory_prohibition` and `conformance_claim` are
+deterministic models. Each is
 a hundred-odd lines of Python doing exactly what its note describes — an
 assistant that follows only the rules active in its stage, a renderer that
 discards a value with nowhere to go, a summariser that keeps a topic and drops

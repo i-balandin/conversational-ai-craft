@@ -72,6 +72,10 @@ What I'd put forward is the circuit: in this work the spec and the acceptance te
 
 If you've seen the sign-off half written up — not the espoused/in-use gap, which is textbook, but the observation that acceptance inherits the specification's bias in exactly this class of project — I'd like to read it.
 
+## Next
+
+Next note: what happens when someone hands you a published quality framework and asks you to show the assistant conforms to it — and why the honest answer is never a single percentage.
+
 ## How this connects to the other notes
 
 The other six notes are all about instruments that report on something that wasn't there: a stage the conversation never reached, a prompt that never rendered, a policy the judge shouldn't have been marking against, a rule that was never retrieved. This one is about the first instrument in the chain, which is the client's own account of their practice — and it fails the same way. It reports, and the report is confident, and confidence is not the thing you needed.

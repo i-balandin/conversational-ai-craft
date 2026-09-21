@@ -27,6 +27,7 @@ jobs:
           python examples/judge_contamination/run_demo.py
           python examples/memory_prohibition/run_demo.py
           python examples/style_markers/run_demo.py
+          python examples/conformance_claim/run_demo.py
 
   promptfoo:
     name: stage-aware suite (promptfoo)
