@@ -42,11 +42,12 @@ jobs:
       - name: Install pinned promptfoo
         run: npm install --no-audit --no-fund
       - name: Run the suite
-        run: ./node_modules/.bin/promptfoo eval -c promptfooconfig.yaml -o results.json --no-cache
-        # promptfoo exits non-zero when assertions fail. Three of these are
-        # meant to fail - the suite documents a broken transcript - so the exit
-        # code is not the signal here; the report is.
-        continue-on-error: true
+        # promptfoo exits non-zero when assertions fail, and three of these are
+        # meant to fail: the suite documents a transcript that should fail. The
+        # exit code carries no information here, so it is discarded explicitly
+        # rather than with continue-on-error, which would leave a failure
+        # annotation on a run that did exactly what it was supposed to.
+        run: ./node_modules/.bin/promptfoo eval -c promptfooconfig.yaml -o results.json --no-cache || true
       - name: Report over applicable results only
         run: python report.py results.json
       - name: Keep the run
