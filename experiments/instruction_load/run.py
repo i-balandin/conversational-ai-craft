@@ -33,6 +33,10 @@ Environment:
     CEN_REPEATS      runs per message per cell (default: 10)
     CEN_TEMPERATURE  sampling temperature (default: 1.0 - run-to-run variation
                      is one of the things being measured, so do not set 0)
+    CEN_DELAY        minimum seconds between calls (default 0). A free tier
+                     limits requests per minute; set this to a little over
+                     60/RPM for your tier and the run will not spend its time
+                     backing off.
     CEN_DRY_RUN      1 to exercise the whole pipeline with a canned responder,
                      no API key and no cost. Use it to check the plumbing.
 
@@ -70,6 +74,7 @@ MODELS = [m.strip() for m in os.environ.get(
 REPEATS = int(os.environ.get("CEN_REPEATS", "10"))
 TEMPERATURE = float(os.environ.get("CEN_TEMPERATURE", "1.0"))
 DRY_RUN = os.environ.get("CEN_DRY_RUN") == "1"
+DELAY = float(os.environ.get("CEN_DELAY", "0"))
 LOAD_LEVELS = [0, 5, 10, 20, 40]
 STAGES = 4
 
@@ -194,6 +199,30 @@ class DryRunClient:
                 "prepare notes first. What do you think? Does that feel possible? ")
 
 
+def paced(call, min_interval):
+    """Hold a minimum interval between calls, counting the call's own latency.
+
+    A free tier rate-limits by requests per minute, and retrying into a limit
+    you are still exceeding just burns the backoff. Pacing up front is cheaper
+    than recovering: set CEN_DELAY to slightly more than 60/RPM for your tier.
+    """
+    if min_interval <= 0:
+        return call
+    import time
+    last = [0.0]
+
+    def wrapped(*args, **kwargs):
+        wait = min_interval - (time.monotonic() - last[0])
+        if wait > 0:
+            time.sleep(wait)
+        try:
+            return call(*args, **kwargs)
+        finally:
+            last[0] = time.monotonic()
+
+    return wrapped
+
+
 def with_retry(call, attempts=6, base=4.0):
     """Retry on anything the provider raises, with exponential backoff.
 
@@ -279,7 +308,7 @@ def make_responder():
         return lambda model, system, msg, n_active: client.reply(n_active)
     if PROVIDER not in RESPONDERS:
         sys.exit(f"Unknown CEN_PROVIDER {PROVIDER!r}. One of: {', '.join(RESPONDERS)}")
-    return with_retry(RESPONDERS[PROVIDER]())
+    return with_retry(paced(RESPONDERS[PROVIDER](), DELAY))
 
 
 # ------------------------------------------------------------------- the run
