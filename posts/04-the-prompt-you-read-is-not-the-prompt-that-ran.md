@@ -105,3 +105,7 @@ If you have seen this class of failure written up, particularly the dropped dire
 ## How this connects to the other notes
 
 Note #1 is about an evaluation that passes because the conversation never reached the stage being checked. This one is about an evaluation that passes because the instruction never reached the model. They are the same species: the instrument reports on something that was not there, and reports it as fine. The unwritten note on silent retrieval is the third member of the family — and in the case above, the two were the same event, since what went missing was the retrieval block itself.
+
+## Next
+
+Next note: the judge that reads the policy it is marking against, and what that does to every criterion in the rubric.

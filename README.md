@@ -87,6 +87,21 @@ never in the prompt — is the expensive part.
 python examples/render_drift/run_demo.py
 ```
 
+**5. [Your judge is reading the rules it marks against.](posts/05-the-judge-reads-the-policy.md)**
+
+To grade a conversation, a model judge needs the assistant's policy — otherwise
+it can't tell a violation from a design choice. That necessary decision makes
+your prompt an input to your scores: an absolute in the policy bleeds into
+criteria about something else entirely, exceptions are honoured only where a
+criterion repeats them, and a criterion outlives the requirement it encoded, so
+a corrected assistant scores *down* for obeying the client. Withholding the
+policy stops the bleed and starts failing behaviour the policy permits, so it's
+a diagnostic rather than a fix.
+
+```
+python examples/judge_contamination/run_demo.py
+```
+
 ## The same argument in a real harness
 
 An argument that only holds inside my own evaluator isn't worth much. So note
@@ -147,8 +162,8 @@ rows that say "not done" are the ones that make the rest credible.
 
 Two different kinds of thing live in `examples/`, and the difference matters.
 
-**Proofs of design.** `guardrail_branches`, `silent_retrieval` and
-`render_drift` are deterministic models. The assistant is a hundred lines of
+**Proofs of design.** `guardrail_branches`, `silent_retrieval`, `render_drift`
+and `judge_contamination` are deterministic models. The assistant is a hundred lines of
 Python that does exactly what its configuration says, the conversations are ones
 I wrote, and running them produces the same output every time. They demonstrate
 a test design and execute an argument you can step through. They are not

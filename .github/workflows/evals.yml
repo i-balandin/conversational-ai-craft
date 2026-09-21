@@ -24,6 +24,7 @@ jobs:
           python examples/guardrail_branches/run_demo.py
           python examples/silent_retrieval/run_demo.py
           python examples/render_drift/run_demo.py
+          python examples/judge_contamination/run_demo.py
 
   promptfoo:
     name: stage-aware suite (promptfoo)

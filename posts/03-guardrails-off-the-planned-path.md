@@ -74,3 +74,7 @@ I'm not claiming that safety testing or adversarial testing is new. What I'm poi
 ## How this connects to the other notes
 
 Note #2 argued for scoping rules to stages. This note is the caveat that comes with it: a few rules must be exempt, and you have to test that they are. Note #1 is the reason the problem stays invisible — planned-path test sets are exactly the ones that report everything as fine.
+
+## Next
+
+Next note: the gap between the prompt in your repository and the string the model actually received, and why it is silent in both directions.
