@@ -14,10 +14,13 @@ error or look like a failure, which is why a test suite catches them only if it
 was written with that specific shape of defect in mind. Each note describes one
 of those shapes, how to test for it, and what the test costs.
 
-Every note ships with a script that reproduces what it describes: plain Python,
-no dependencies, no API key — the one exception is the experiment in note #2,
-which needs a model. Everything is synthetic: made-up transcripts, made-up
-policies, no client material anywhere.
+Every note ships with runnable code, though not all of it does the same job:
+mostly a script that executes the argument so you can step through it, once a
+suite that scores transcripts two ways, once a measuring tool that argues
+nothing, and once an experiment that looked for the effect its note argues for
+and did not find it. Plain Python, no dependencies, no API key — the exception
+is that experiment, which needs a model. Everything is synthetic: made-up
+transcripts, made-up policies, no client material anywhere.
 
 ## The notes
 
