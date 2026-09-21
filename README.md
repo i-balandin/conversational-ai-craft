@@ -1,5 +1,7 @@
 # Conversational AI Craft
 
+[![evals](https://github.com/i-balandin/conversational-ai-craft/actions/workflows/evals.yml/badge.svg)](https://github.com/i-balandin/conversational-ai-craft/actions/workflows/evals.yml)
+
 Notes by Ihor Balandin on conversational AI once it is past the demo: an
 assistant built around one organisation's own method, which then has to keep
 behaving predictably while real people use it and ask things no test script
