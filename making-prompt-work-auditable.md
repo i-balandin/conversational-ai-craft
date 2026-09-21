@@ -6,7 +6,7 @@ Prompt and evaluation work has an awkward property: when it succeeds, it disappe
 
 That is a problem for the work, not just for the person doing it. If you cannot point at what your analysis changed, you cannot tell a correct call from a lucky one, you cannot defend a decision that later looks odd, and you end up making the only claim available to you, which is "we improved quality" — a sentence that cannot be checked and therefore isn't worth much.
 
-This is the artefact I keep to avoid that. It is simple and slightly tedious, which is most of why it works.
+This is the artefact I keep to avoid that. It is simple and a bit tedious to maintain, and it works partly because of that.
 
 ## The artefact
 
@@ -19,7 +19,7 @@ One table. One row per thing you proposed. Five columns:
 | BoN | Generate several candidates and keep the best, instead of shipping the first acceptable one | Analysis doc 2, fix 1 | ❌ open | still a single-candidate loop | — |
 | Thr | Raise the gate threshold so a mediocre score stops shipping | Analysis doc 2 | ❌ deferred by design | gated behind evaluation | — |
 
-That is the whole method. What makes it worth anything is four rules about how it is filled in.
+That is the method. The four rules about how it gets filled in are what make it useful.
 
 ## The four rules
 
@@ -35,7 +35,7 @@ That is the whole method. What makes it worth anything is four rules about how i
 
 **A clean restart.** Engagements pause. When one resumes — and mine have — the next scope starts from a table of done / partial / open rather than from whoever remembers most confidently.
 
-**Knowing whether the work was load-bearing.** The strongest signal I have come across is a proposal landing in production *after* the engagement had formally stopped. Nobody was performing for anybody at that point. If your findings get implemented when there is no longer a contract to justify it, they were real.
+**Knowing whether the work was load-bearing.** The clearest signal I have had is a proposal landing in production *after* the engagement had formally stopped. Nobody was performing for anybody at that point. If your findings get implemented when there is no longer a contract to justify it, they were real.
 
 **Evidence that survives you leaving.** Instances are lost. Access is revoked, branches move, products get shut down. What survives is the record, and a record built on commit anchors is still checkable by someone who was never there.
 
@@ -51,4 +51,4 @@ And it measures whether your proposal was *implemented*, which is not the same a
 
 Keep it open while you work rather than reconstructing it at the end; reconstruction is when memory quietly replaces evidence. One line per proposal, written the day you make it, with the document and section you made it in. Then one verification pass at a natural boundary — end of a phase, a pause, a handoff — where you open the branch, check each row, and write the status you actually find, including the ones you would rather not.
 
-The version of this that is worth having takes about an hour to fill in and is the only thing you will still be able to prove a year later.
+Filling one in properly takes about an hour. A year later it is usually the only part of the work I can still prove.

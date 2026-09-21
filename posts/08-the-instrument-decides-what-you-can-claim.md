@@ -10,11 +10,11 @@ The second request is the hard one, and it is usually answered with a number. We
 
 Mapping a policy to controls and evidence is what compliance teams have done for decades, and the limits of doing it by keyword are documented in that literature. Rubric design and LLM-as-judge are well covered. Reporting per control rather than as an aggregate is standard advice in automated compliance checking.
 
-None of that is mine. What I want to add is what happens when the thing being assessed is a conversation, and the instrument is a judge reading a transcript.
+None of that is mine. My concern is narrower: what happens when the thing being assessed is a conversation, and the instrument is a judge reading a transcript.
 
 ## An eval criterion is a judgement about a transcript
 
-That sentence is the whole mechanism, and it constrains everything downstream.
+Everything below follows from that sentence.
 
 Most quality frameworks worth adopting were written before LLM products, for human practitioners or for software in general. So a single numbered list will happily contain, side by side:
 
@@ -41,11 +41,11 @@ Then two tags on every criterion, kept in the criterion set itself: **which inst
 
 If a principle has no trace in a transcript and somebody writes a session criterion for it anyway — "respects data minimisation", judged by a model reading a support conversation — you are worse off than with no criterion at all.
 
-It counts as coverage in every tally. It passes, because there is nothing there to fail. And it converts an honest gap into a claim. This is the same failure as note #1's vacuous pass, and as the framework map's point that a grep for a framework's name cannot tell a framework that is built from one that is mentioned, arriving through a third door: a measure with nothing to measure returns a pass, and a pass gets read as evidence.
+It counts as coverage in every tally, it passes because there is nothing there to fail, and an honest gap becomes a claim. This is the same failure as note #1's vacuous pass, and as the framework map's point that a grep for a framework's name cannot tell a framework that is built from one that is mentioned, arriving through a third door: a measure with nothing to measure returns a pass, and a pass gets read as evidence.
 
 ## Predictability, and what replaces it
 
-Here is the part I think matters most, and it is a genuine open problem rather than a fix.
+This one I have not solved. It is an open problem, and what follows is a proposal for how to live with it rather than a fix.
 
 Frameworks written before generative models routinely list **predictability** among the conditions on which a user's trust is supposed to rest. It belongs there. And a generative assistant cannot deliver it in the form those frameworks assume, because variability is how the technology works. The tension is usually left unresolved: the requirement stays in the list, the technology cannot meet it literally, and everyone proceeds.
 
@@ -55,11 +55,11 @@ What can be promised instead is **bounded conformance** — not that the assista
 - **Spread as part of the result.** The same transcripts, re-run, give a range. Publish the range beside the score. **A score without its spread is not a measurement**, and a single number invites exactly the comparison it cannot support.
 - **Invariants with no spread at all.** Disclosure of what the assistant is, the crisis protocol, the limits of competence. These are not bands; they are a floor, and one violation is a failure rather than a dip in an average.
 
-That third item is note #3's shared floor, arriving from the governance side of the same argument. It is the same set of rules, identified by a different route, which is the strongest evidence I have that the distinction is real.
+That third item is note #3's shared floor, reached from the governance side instead of the architectural one. Same set of rules, two different routes — which is about as much reassurance as I can give that the distinction is real and not a preference of mine.
 
-## Two preconditions nobody sequences
+## Two things that have to be true first
 
-Both of these cost nothing to check and are routinely skipped, and each one invalidates everything after it.
+Neither takes long to check, and both get skipped anyway. If either one is wrong, nothing you measure afterwards tells you much.
 
 **Do not calibrate an instrument on a broken substrate.** In one case I was preparing to calibrate a judge when it turned out that most sessions were not progressing past their opening stage — a platform defect, nothing to do with the coaching or the criteria. Calibrating then would have produced a beautifully stable measurement of a navigation bug. Before you calibrate a measure of how well something is done, check that the thing is being done at all.
 
@@ -83,7 +83,7 @@ Read it as a diagram: the framework is mine, invented for the file, and the arit
 
 I'm not claiming that policy-to-control mapping is new, that keyword coverage is unreliable, or that assurance levels are my idea — those come from the assurance-case tradition and I'm borrowing them.
 
-What I'd put forward is the sorting step and what it implies. That an eval criterion's reach is bounded by what a transcript contains; that sorting a framework by observability *before* translating it usually shows the eval set can substantiate markedly less of it than a tally of criteria implies; that the criterion written for an unobservable principle is worse than no criterion; and that predictability, in the form pre-generative frameworks require it, has to be replaced by bounded conformance with published spread rather than quietly dropped.
+The sorting step, and what follows from it. That an eval criterion's reach is bounded by what a transcript contains; that sorting a framework by observability *before* translating it usually shows the eval set can substantiate markedly less of it than a tally of criteria implies; that the criterion written for an unobservable principle is worse than no criterion; and that predictability, in the form pre-generative frameworks require it, has to be replaced by bounded conformance with published spread rather than quietly dropped.
 
 **On evidence.** This comes from one engagement, working against one published framework in one domain, plus the measurement practice in the rest of these notes. The sorting exercise I did once; the three-instrument split I proposed and have not yet seen adopted; the predictability replacement is a proposal, not a result. No counts beyond "roughly a third", which is as precise as I am willing to be about a single case.
 

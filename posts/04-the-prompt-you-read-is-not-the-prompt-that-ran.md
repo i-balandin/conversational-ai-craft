@@ -68,7 +68,7 @@ Two details decide whether this works in practice.
 
 **Log it; do not throw.** The temptation is to make this a hard assertion at startup. Resist it, for a specific reason: by the time you write this check, the defect is often already live. An assertion that fails the request would take the product down to tell you something a log line tells you just as well, and taking the product down is not the same as fixing it — the fix is republishing the template. Fail open, shout loudly, and let a human act. This is one of the few places where I think the usual "fail closed" instinct is wrong, and it is wrong because the check is *diagnostic*, not a safety control.
 
-Three questions follow, and they cost nothing:
+Three questions follow from it:
 
 - **Before you rewrite an instruction that didn't take:** was it in the rendered prompt? If you can't answer from a log, the rewrite isn't an experiment, it's a guess with a clean shirt on.
 - **Before you quote an evaluation result:** which rendered prompt produced it? A score inherits whatever was missing that day.
@@ -92,7 +92,7 @@ As with the example in note #3, read it as a diagram rather than a measurement: 
 
 I'm not claiming that prompt templating, configuration drift or LLM observability are new problems, and I'm not claiming a renderer that discards an unused value is a bug. It is sensible behaviour, and so is filling an unmatched placeholder with nothing.
 
-What I'd point at is what happens when you stack them. A template that is data rather than code, a renderer that stays quiet in both directions, and a quality rubric with no way to ask about grounding: together they produce a defect that is **invisible to the instrument most teams are pointing at it**, that looks exactly like a model limitation, and that therefore gets answered with more prompt rewrites. You don't need an observability platform to catch that. You need three lines of logging, and the discipline not to call a rewrite an experiment until you've looked at what actually rendered.
+It is the stack of them that does the damage. A template that is data rather than code, a renderer that stays quiet in both directions, and a quality rubric with no way to ask about grounding: together they produce a defect that is **invisible to the instrument most teams are pointing at it**, that looks exactly like a model limitation, and that therefore gets answered with more prompt rewrites. You don't need an observability platform to catch that. You need three lines of logging, and the discipline not to call a rewrite an experiment until you've looked at what actually rendered.
 
 **On evidence.** I have watched this run undetected in production. Two blocks the code assembled on every conversation — a retrieved-knowledge section and a session-context section — were absent from the deployed template, and therefore from every prompt the model saw, for **almost six months**: from 12 March 2026 until at least 2 September 2026, when the check described above was written. It was still live on that date, and the fix is republishing the template, so the code cannot tell me when — or whether — that happened. Hence "almost six months, and at least that", rather than a tidier figure.
 

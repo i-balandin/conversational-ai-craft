@@ -28,7 +28,7 @@ I call this a silent false-pass. It's the dangerous kind, because it produces ex
 
 **It also has an older and much better-documented name.** In formal verification a specification can pass *vacuously* — an implication that holds trivially because its precondition was never satisfied. It has been studied since the 1990s under the names vacuity and antecedent failure, and the findings there transfer almost word for word. Beer and colleagues report that typically one specification in five passes vacuously during the first formal-verification runs of a new hardware design, and — the part worth sitting with — that a vacuous pass *always* points at a real problem, in the design, the specification or the environment. It is never just noise.
 
-So the phenomenon is not new, and I am not going to pretend it is. What I think is worth adding is that conversation-level evaluation reproduces it exactly, that the unsatisfied precondition here is a stage of the conversation that the test never reached, and that the remedy has to do something formal verification does not need to: report how far the conversations got, because in our setting the precondition failing is itself the finding.
+So the phenomenon is not new, and I am not going to pretend it is. My addition is that conversation-level evaluation reproduces it exactly, that the unsatisfied precondition here is a stage of the conversation that the test never reached, and that the remedy has to do something formal verification does not need to: report how far the conversations got, because in our setting the precondition failing is itself the finding.
 
 ## Why this matters beyond the eval team
 
@@ -64,7 +64,7 @@ Some of this came from work on one particular platform, and one product's quirks
 
 Neither half is new. Scoring whole conversations is standard advice by now, and the silent pass is vacuity, which hardware verification has been detecting and measuring for twenty-five years. That's a good thing to know rather than a disappointment: a field with that much more experience of the same failure can tell you something I couldn't, namely that a vacuous pass is never benign.
 
-What I think is worth adding is the transfer. Conversation-level evaluation has the same structure and almost none of the same hygiene; the precondition that fails here is a stage a test conversation never reached; and the remedy needs one thing verification doesn't, which is a reported stage-reach rate, because how far the conversations got is itself a result. If someone has already made that transfer in writing, I'd genuinely like to read it.
+The transfer is the part worth writing down. Conversation-level evaluation has the same structure and almost none of the same hygiene; the precondition that fails here is a stage a test conversation never reached; and the remedy needs one thing verification doesn't, which is a reported stage-reach rate, because how far the conversations got is itself a result. If someone has already made that transfer in writing, I'd genuinely like to read it.
 
 ## Next
 

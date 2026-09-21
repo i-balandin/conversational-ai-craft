@@ -10,7 +10,7 @@ So the policy goes into the judge's context, and that one necessary decision mak
 
 The biases of LLM-as-judge are well covered by now: position bias, a preference for longer answers, a preference for its own outputs, and the reliability that drops as transcripts get longer. Checking judge-against-human agreement is standard advice, and evaluation guides name contamination — including benchmark examples leaking into evaluator prompts — as something to watch.
 
-None of that is what I want to add. What I want to add is narrower: the specific things that go wrong because the judge is reading *the policy*, as opposed to reading anything else it shouldn't.
+None of that is what I am adding. My concern is narrower: the specific things that go wrong because the judge is reading *the policy*, as opposed to reading anything else it shouldn't.
 
 ## Three consequences, and one trap
 
@@ -60,7 +60,7 @@ Read it as a diagram rather than a measurement. The judge is a model that reason
 
 I'm not claiming that LLM-as-judge has biases, that contamination is a category, or that rubrics go stale. All three are documented, and the last one turns up as a bullet in most evaluation guides.
 
-What I'd put forward is the specific coupling, and that it is not optional. Because a judge needs the policy to do its job at all, the rubric and the prompt are one system with two owners, and the three consequences above follow mechanically rather than as accidents. The withheld-policy run as a *diagnostic* rather than a fix, the compliance-versus-behaviour split as the thing you decide per criterion, and "removing a requirement is a change to the evaluation" as a rule with a cost attached, are the parts I have not seen written up.
+The coupling is the argument, and the important word is that it is not optional. Because a judge needs the policy to do its job at all, the rubric and the prompt are one system with two owners, and the three consequences above follow mechanically rather than as accidents. The withheld-policy run as a *diagnostic* rather than a fix, the compliance-versus-behaviour split as the thing you decide per criterion, and "removing a requirement is a change to the evaluation" as a rule with a cost attached, are the parts I have not seen written up.
 
 **On evidence.** This comes from one family of setups on one platform, where all three consequences turned up in the same quarter and the third one cost the most — a corrected assistant scoring down for obeying the client, argued about for a fortnight before anyone re-read the rubric. No counts: I didn't keep any, and I am not going to construct them now. Treat it as one practitioner's observation plus a diagnostic you can run this afternoon on your own rubric, which will tell you more about your situation than my number would.
 

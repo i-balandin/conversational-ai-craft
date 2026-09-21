@@ -47,7 +47,7 @@ whichever provider SDK you chose, and all of this is verifiable by reading it.
   save; nothing is written outside this folder.
 
 If you want a further belt: use a throwaway key with a spend cap, or run it on
-Gemini's free tier, where a full run costs nothing at all.
+Gemini's free tier, where a full run is free.
 
 ## Scale and cost
 

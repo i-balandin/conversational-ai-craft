@@ -59,7 +59,7 @@ before deciding whether to point a real key at it:
 CEN_DRY_RUN=1 python experiments/instruction_load/run.py
 ```
 
-Any provider, and Gemini's free tier makes a full run cost nothing. What the
+Any provider, and Gemini's free tier makes a full run free. What the
 script sends, where, and why it never touches your key:
 [experiments/instruction_load/README.md](experiments/instruction_load/README.md).
 
@@ -128,8 +128,8 @@ comes from them and so does acceptance. Often their account is accurate — but
 you can't tell from the description which case you're in, and if the spec
 encoded the practice they intend rather than the one they run, sign-off compares
 it against the same internal model and approves it. One held-out artefact of the
-real practice breaks that circuit, and costs nothing when the account was right
-all along.
+real practice breaks that circuit, and if the account was right all along you
+have lost an afternoon.
 
 ```
 python examples/style_markers/run_demo.py

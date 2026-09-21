@@ -66,7 +66,7 @@ It also shows you its own limit, which is why I'd read its output twice. The two
 
 I'm not claiming that self-report is unreliable, that observation beats asking, or that experts can't introspect — all three are long-settled, cited above, and better established than anything I could add.
 
-What I'd put forward is the circuit: in this work the spec and the acceptance test come from one source, so the review round cannot detect an error the spec introduced, and the cost surfaces later as an undiagnosable complaint. One held-out artefact breaks it, costs almost nothing when the account was accurate all along, and turns a vague verdict into a comparison you can act on.
+The circuit, then. In this work the spec and the acceptance test come from one source, so the review round cannot detect an error the spec introduced, and the cost surfaces later as an undiagnosable complaint. One held-out artefact breaks it, costs almost nothing when the account was accurate all along, and turns a vague verdict into a comparison you can act on.
 
 **On evidence.** This recurs across engagements rather than resting on one, and I kept no count, so it sits at the observation rung: it informs how I'd scope a build, and it doesn't constrain anyone else's. The strongest single thing I can say for it is negative — I have not had a case where holding an artefact back cost anything, and I have had cases where nothing independent existed and the vague complaint arrived on schedule.
 

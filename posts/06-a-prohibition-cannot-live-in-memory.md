@@ -74,7 +74,7 @@ Read it as a diagram, not a measurement. The extractor and the retriever are a f
 
 I'm not claiming that retrieval-based memory is badly designed, that summarisers being lossy is news, or that safety constraints belong outside the model — that last one is established practice and I'm leaning on it rather than proposing it.
 
-What I'd put forward is the asymmetry, and that the store is where it gets lost: preferences degrade gracefully and prohibitions do not, the two are indistinguishable to a memory pipeline, and the pipeline's two extra failure modes land entirely on the object that can't absorb them. Plus the consequence for design — that "never mention X again" is not a memory feature, and the ten-minute check that shows you what your extraction step did to the sentence.
+My claim is the asymmetry, plus the fact that the store is where it goes missing: preferences degrade gracefully and prohibitions do not, the two are indistinguishable to a memory pipeline, and the pipeline's two extra failure modes land entirely on the object that can't absorb them. Plus the consequence for design — that "never mention X again" is not a memory feature, and the ten-minute check that shows you what your extraction step did to the sentence.
 
 **On evidence.** This came out of establishing what a cross-bot memory layer could and couldn't be asked to do on one platform: real memory, scoped per user and project, holding goals and commitments, with entries written by asynchronous extraction and fetched by a similarity search the model chooses to call. There was no boundary category, and a prohibition stored as a fact behaved the way this note describes. One platform, one investigation, no counts — and the design rule is the part I'd defend, not a number.
 
