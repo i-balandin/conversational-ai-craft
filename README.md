@@ -260,6 +260,15 @@ point. Corrections, disagreements and "this already exists, here it is" are all
 welcome: [open an issue](https://github.com/i-balandin/conversational-ai-craft/issues)
 or reach me on [LinkedIn](https://www.linkedin.com/in/ihor-balandin-2510412b/).
 
+## How this was made
+
+The observations come from my own work, and so do the decisions about what to
+claim, what to hold back, and what the evidence actually supports. The code and
+much of the drafting were done with an AI assistant under my direction — the
+same way I work professionally, and the reason it shows up in the contributor
+list. Where I got something wrong, the corrections are in the commit history
+rather than tidied away.
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
