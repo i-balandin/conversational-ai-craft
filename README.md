@@ -19,8 +19,8 @@ of those shapes, how to test for it, and what the test costs.
 Every note ships with runnable code, though not all of it does the same job:
 mostly a script that executes the argument so you can step through it, once a
 suite that scores transcripts two ways, once a measuring tool that argues
-nothing, and once an experiment that looked for the effect its note argues for
-and did not find it. Plain Python, no dependencies, no API key — the exception
+nothing, once a check that runs over real measured results, and once an
+experiment that looked for the effect its note argues for and did not find it. Plain Python, no dependencies, no API key — the exception
 is that experiment, which needs a model. Everything is synthetic: made-up
 transcripts, made-up policies, no client material anywhere.
 
@@ -227,6 +227,13 @@ rate anyone observed.
 demonstration: give it two transcripts and it prints the surface markers for
 each and the gap. Note #7 says why shipping a demonstration there would have
 proved only my own construction.
+
+**A check run on real data.** `measure_can_fail` is the only example here that
+reads measured results rather than a fixture. It takes the committed data from
+note #2's experiment and shows that two of its three criteria never failed once
+in 180 observations — which is why that experiment found nothing, and why the
+check it performs is worth running before you spend anything on a run of your
+own.
 
 **Proofs of effect.** `false_pass` and the promptfoo suite score transcripts
 with two different evaluators and let you watch the same conversation flip from

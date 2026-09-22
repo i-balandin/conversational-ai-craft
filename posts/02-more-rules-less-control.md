@@ -55,9 +55,10 @@ You don't need to take any of this on faith. The repository has a small experime
 
 Then try the same core rules with the extra rules scoped to stages, so fewer are active at once, and compare. That's the direct test of design move 1.
 
+It takes whichever provider key you have, and it runs end to end with no key at all first, so you can see what it does before pointing a real one at it:
+
 ```
-export ANTHROPIC_API_KEY=...
-python experiments/instruction_load/run.py
+CEN_DRY_RUN=1 python experiments/instruction_load/run.py
 ```
 
 ## What happened when I ran it
@@ -79,6 +80,20 @@ What would actually test it, stated before running anything else:
 - **More than one model and more than 180 calls.** A free tier's daily cap ended the last cell of this run, which is also why it is 9 of 10 cells rather than 10.
 
 Honest limits, all of them: one model, one provider, single-turn, 180 calls, four repeats per cell, criteria that saturated, and a run that stopped one cell short.
+
+### The rule I should have applied before spending anything
+
+The null is worth one transferable thing, and it is cheap enough that I am slightly annoyed at myself for not doing it first.
+
+**Before an experiment that looks for degradation, check that each criterion fails at least sometimes under the easiest condition.** A criterion that passes 100% at baseline has no room to fall. It will report a clean sweep whatever the condition does, and you will read that sweep as a result.
+
+Run it on my data and the verdict is blunt: two of my three criteria never failed once in 180 observations, and the third failed once, not at baseline. Whatever those two were measuring, it was not something that could get worse.
+
+```
+python examples/measure_can_fail/run_demo.py
+```
+
+That check is a single small run at the easiest setting, before the real one. It would have told me in five minutes that the experiment could not answer the question, and I would have rebuilt the criteria rather than the conclusion.
 
 ## What I'm claiming, and what I'm not
 
